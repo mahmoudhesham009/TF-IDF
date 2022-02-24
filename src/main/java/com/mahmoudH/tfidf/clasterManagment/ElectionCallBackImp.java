@@ -1,5 +1,6 @@
 package com.mahmoudH.tfidf.clasterManagment;
 
+import com.mahmoudH.tfidf.model.SearchLeader;
 import com.mahmoudH.tfidf.model.SearchWorker;
 import com.mahmoudH.tfidf.networking.WebServer;
 import org.apache.zookeeper.KeeperException;
@@ -18,7 +19,10 @@ public class ElectionCallBackImp implements onElectionCallBack {
         serviceRegistry.createServiceRegistry();
     }
 
-    public void onBeingLeader() {
+    public void onBeingLeader() throws IOException {
+        SearchLeader searchLeader=new SearchLeader(serviceRegistry);
+        WebServer webServer=new WebServer(port, searchLeader);
+        webServer.startServer();
         try {
             serviceRegistry.unregisterService();
             serviceRegistry.updateAddress();
@@ -33,7 +37,8 @@ public class ElectionCallBackImp implements onElectionCallBack {
         try {
             SearchWorker searchWorker=new SearchWorker();
             WebServer webServer=new WebServer(port,searchWorker);
-            serviceRegistry.registerServiceToCluster("http://"+ InetAddress.getLocalHost().getCanonicalHostName()+"/"+port+"/"+searchWorker.getEndPoint());
+            webServer.startServer();
+            serviceRegistry.registerServiceToCluster("http://"+ InetAddress.getLocalHost().getCanonicalHostName()+":"+port+"/"+searchWorker.getEndPoint());
         } catch (KeeperException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {

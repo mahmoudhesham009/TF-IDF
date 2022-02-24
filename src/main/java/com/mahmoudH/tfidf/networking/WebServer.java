@@ -20,7 +20,7 @@ public class WebServer {
         server = HttpServer.create(new InetSocketAddress(port), 0);
     }
 
-    void startServer() {
+    public void startServer() {
         HttpContext httpContext = server.createContext(requestCallback.getEndPoint());
         httpContext.setHandler(this::handler);
     }

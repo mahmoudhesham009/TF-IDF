@@ -3,6 +3,7 @@ package com.mahmoudH.tfidf.clasterManagment;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class LeaderElection implements Watcher {
         zNodeName = znodeFullPath.replace(ELECTION_NAMESPACE + "/", "");
     }
 
-    void electTheLeader() throws KeeperException, InterruptedException {
+    void electTheLeader() throws KeeperException, InterruptedException, IOException {
         Stat stat = null;
         String preZNode;
         List<String> allZNodes;
@@ -59,6 +60,8 @@ public class LeaderElection implements Watcher {
                 } catch (KeeperException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
         }
