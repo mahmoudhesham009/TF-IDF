@@ -44,7 +44,7 @@ public class ServiceRegistry implements Watcher {
             zooKeeper.delete(currentNode, -1);
     }
 
-    public List getAllAddress() throws KeeperException, InterruptedException {
+    public List<String> getAllAddress() throws KeeperException, InterruptedException {
         if (address == null)
             updateAddress();
         return address;

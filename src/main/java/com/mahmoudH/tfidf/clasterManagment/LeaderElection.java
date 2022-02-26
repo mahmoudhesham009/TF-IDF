@@ -29,7 +29,7 @@ public class LeaderElection implements Watcher {
         zNodeName = znodeFullPath.replace(ELECTION_NAMESPACE + "/", "");
     }
 
-    void electTheLeader() throws KeeperException, InterruptedException, IOException {
+    public void electTheLeader() throws KeeperException, InterruptedException, IOException {
         Stat stat = null;
         String preZNode;
         List<String> allZNodes;

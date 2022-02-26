@@ -11,6 +11,7 @@ import java.net.UnknownHostException;
 
 public class ElectionCallBackImp implements onElectionCallBack {
     ServiceRegistry serviceRegistry;
+    WebServer webServer;
     int port;
 
     public ElectionCallBackImp(ServiceRegistry serviceRegistry, int port) throws KeeperException, InterruptedException {
@@ -21,7 +22,9 @@ public class ElectionCallBackImp implements onElectionCallBack {
 
     public void onBeingLeader() throws IOException {
         SearchLeader searchLeader=new SearchLeader(serviceRegistry);
-        WebServer webServer=new WebServer(port, searchLeader);
+        if(webServer!=null)
+            webServer.destroyServer();
+        webServer=new WebServer(port, searchLeader);
         webServer.startServer();
         try {
             serviceRegistry.unregisterService();
@@ -36,9 +39,11 @@ public class ElectionCallBackImp implements onElectionCallBack {
     public void onBeingWorker() {
         try {
             SearchWorker searchWorker=new SearchWorker();
-            WebServer webServer=new WebServer(port,searchWorker);
+            if(webServer!=null)
+                webServer.destroyServer();
+            webServer=new WebServer(port,searchWorker);
             webServer.startServer();
-            serviceRegistry.registerServiceToCluster("http://"+ InetAddress.getLocalHost().getCanonicalHostName()+":"+port+"/"+searchWorker.getEndPoint());
+            serviceRegistry.registerServiceToCluster("http://"+ InetAddress.getLocalHost().getCanonicalHostName()+":"+port+searchWorker.getEndPoint());
         } catch (KeeperException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {

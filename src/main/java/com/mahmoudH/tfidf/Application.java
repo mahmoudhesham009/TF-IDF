@@ -26,6 +26,7 @@ public class Application implements Watcher{
         application.connectZooKeeper();
         LeaderElection leaderElection=new LeaderElection(application.zooKeeper, new ElectionCallBackImp(new ServiceRegistry(application.zooKeeper),currentServerPort));
         leaderElection.leaderVlo();
+        leaderElection.electTheLeader();
         application.run();
     }
 

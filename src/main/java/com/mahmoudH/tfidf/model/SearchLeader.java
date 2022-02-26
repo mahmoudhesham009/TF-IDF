@@ -2,22 +2,24 @@ package com.mahmoudH.tfidf.model;
 
 import com.mahmoudH.tfidf.clasterManagment.ServiceRegistry;
 import com.mahmoudH.tfidf.networking.OnRequestCallback;
+import com.mahmoudH.tfidf.networking.OurHttpClient;
 import com.mahmoudH.tfidf.search.TFIDF;
 import org.apache.zookeeper.KeeperException;
 import org.w3c.dom.ls.LSInput;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public class SearchLeader implements OnRequestCallback {
     ServiceRegistry workers;
+    OurHttpClient client;
     public SearchLeader(ServiceRegistry workers) {
         this.workers=workers;
-
+        client=new OurHttpClient();
     }
 
     @Override
@@ -26,21 +28,51 @@ public class SearchLeader implements OnRequestCallback {
         List<String> docs=readDocList();
         List<List<String>> distWork=distributedWork(docs,workers);
 
-        return new byte[0];
+        List<Results> results=sendTasks(distWork,terms);
+
+        Map<String , DocumentData> finalResults=new HashMap<>();
+        for(Results res:results){
+            finalResults.putAll(res.getResults());
+        }
+
+        Map<String , Double > finalRes= TFIDF.getDocsSortedByScore(Arrays.asList(terms.split(" ").clone()), finalResults);
+
+        for(String s:finalRes.keySet()){
+            System.out.println(s+": "+finalRes.get(s));
+        }
+
+        return SerializationUtil.serialize(finalRes);
     }
 
     @Override
     public String getEndPoint() {
-        return null;
+        return "/search";
     }
 
 
-    List<Results> sendTasks(List<List<String>> distWork, String terms){
+    List<Results> sendTasks(List<List<String>> distWork, String terms) throws KeeperException, InterruptedException {
         List<String> termsInList= TFIDF.getWordsFromLine(terms);
+        List<Task> tasks=new ArrayList<>();
         for(List<String>dist:distWork){
             Task task=new Task(termsInList,dist);
-
+            tasks.add(task);
         }
+
+        CompletableFuture<Results>[] results=new CompletableFuture[workers.getAllAddress().size()];
+        for(int i=0;i<tasks.size();i++){
+            CompletableFuture<Results> result=client.sendTasks(workers.getAllAddress().get(i),tasks.get(i));
+            results[i]=result;
+        }
+
+        List<Results> resultsList=new ArrayList<>();
+        for(CompletableFuture<Results> result: results){
+            try {
+                resultsList.add(result.get());
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        return resultsList;
     }
 
 
@@ -52,7 +84,7 @@ public class SearchLeader implements OnRequestCallback {
         }
         int pointer=0;
         List<List<String>> disDoc=new ArrayList<>();
-        for(int i=0;i<disDoc.size()-1;i++){
+        for(int i=0;i<numOfWorkers;i++){
             disDoc.add(new ArrayList<>());
         }
 

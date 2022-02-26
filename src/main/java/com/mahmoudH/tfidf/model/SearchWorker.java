@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 public class SearchWorker implements OnRequestCallback {
     @Override
     public byte[] handleRequest(byte[] request) throws FileNotFoundException {
+        System.out.println("Recived the req");
         Task task= (Task) SerializationUtil.deserialize(request);
         Results results=new Results(new HashMap<>());
         for(String s: task.documents){
@@ -33,6 +34,6 @@ public class SearchWorker implements OnRequestCallback {
 
     @Override
     public String getEndPoint() {
-        return null;
+        return "/task";
     }
 }
