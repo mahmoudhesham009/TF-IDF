@@ -30,6 +30,6 @@ Documaents searching algorithim running of distrbuted system using zookeeper as 
 java -jar tf-idf-1.0-SNAPSHOT-jar-with-dependencies.jar 8085
 ```
 
-- run the [front-end applicatoin](https://github.com/mahmoudhesham009/TF-IDF_FrontEnd)
-- send git request contain terms as query to the front-end app (you can user post man)
+- run the [front-end applicatoin](https://github.com/mahmoudhesham009/TF-IDF_FrontEnd).
+- send get request contain terms as query to the front-end app.
 
