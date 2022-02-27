@@ -1,7 +1,7 @@
 # TF-IDF
 ## _TTF-IDF searching algorithm running on cluster of nodes using zookeeper_
 
-[![N|Solid](https://cdn-media-1.freecodecamp.org/images/vQ77VuGVlTR95GgMxzyKqydIqoRJcPcWrigy)]
+![N|Solid](https://cdn-media-1.freecodecamp.org/images/vQ77VuGVlTR95GgMxzyKqydIqoRJcPcWrigy)
 
 
 
