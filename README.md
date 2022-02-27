@@ -22,14 +22,14 @@ Documaents searching algorithim running of distrbuted system using zookeeper as 
 
 ## How to run it
 
--clone the project.
--copy and past the documents you wanna search in in the books file.
--package project jar file using maven.
--run jar file muliple time on different ports by pass the port number in the program args.
+- clone the project.
+- copy and past the documents you wanna search in in the books file.
+- package project jar file using maven.
+- run jar file muliple time on different ports by pass the port number in the program args.
 ```cmd
 java -jar tf-idf-1.0-SNAPSHOT-jar-with-dependencies.jar 8085
 ```
 
--run the [front-end applicatoin](https://github.com/mahmoudhesham009/TF-IDF_FrontEnd)
--send git request contain terms as query to the front-end app (you can user post man)
+- run the [front-end applicatoin](https://github.com/mahmoudhesham009/TF-IDF_FrontEnd)
+- send git request contain terms as query to the front-end app (you can user post man)
 
