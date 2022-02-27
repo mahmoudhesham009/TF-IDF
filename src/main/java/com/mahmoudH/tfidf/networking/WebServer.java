@@ -45,6 +45,7 @@ public class WebServer {
             byte[] req=IOUtils.toByteArray(httpExchange.getRequestBody());
             if(httpExchange.getRequestURI().getQuery()!=null){
                 String terms= httpExchange.getRequestURI().getQuery().split("=")[1];
+                terms=terms.replace('+',' ');
                 req= SerializationUtil.serialize(terms);
             }
             response = requestCallback.handleRequest(req);

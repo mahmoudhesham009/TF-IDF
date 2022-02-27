@@ -19,6 +19,15 @@ public class LeaderElection implements Watcher {
     public LeaderElection(ZooKeeper zooKeeper, onElectionCallBack electionCallBack) {
         this.zooKeeper = zooKeeper;
         this.electionCallBack = electionCallBack;
+        try {
+            if(zooKeeper.exists("/election",false)==null){
+                zooKeeper.create("/election",new byte[]{},ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+            }
+        } catch (KeeperException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 
