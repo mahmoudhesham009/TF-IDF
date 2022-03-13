@@ -1,11 +1,10 @@
 package com.mahmoudH.tfidf.model;
 
-import com.mahmoudH.tfidf.clasterManagment.ServiceRegistry;
+import com.mahmoudH.tfidf.clasterManagment.WorkersServiceRegistry;
 import com.mahmoudH.tfidf.networking.OnRequestCallback;
 import com.mahmoudH.tfidf.networking.OurHttpClient;
 import com.mahmoudH.tfidf.search.TFIDF;
 import org.apache.zookeeper.KeeperException;
-import org.w3c.dom.ls.LSInput;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,9 +14,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public class SearchLeader implements OnRequestCallback {
-    ServiceRegistry workers;
+    WorkersServiceRegistry workers;
     OurHttpClient client;
-    public SearchLeader(ServiceRegistry workers) {
+    public SearchLeader(WorkersServiceRegistry workers) {
         this.workers=workers;
         client=new OurHttpClient();
     }
@@ -76,8 +75,8 @@ public class SearchLeader implements OnRequestCallback {
     }
 
 
-    List<List<String>> distributedWork(List<String> docs,ServiceRegistry serviceRegistry) throws InterruptedException, KeeperException {
-        int numOfWorkers=serviceRegistry.getAllAddress().size();
+    List<List<String>> distributedWork(List<String> docs, WorkersServiceRegistry workersServiceRegistry) throws InterruptedException, KeeperException {
+        int numOfWorkers= workersServiceRegistry.getAllAddress().size();
         if(numOfWorkers==0){
             System.out.println("there is no workers available");
             return null;

@@ -1,18 +1,15 @@
 package com.mahmoudH.tfidf;
 
+import com.mahmoudH.tfidf.clasterManagment.CoordinatorServiceRegistry;
 import com.mahmoudH.tfidf.clasterManagment.ElectionCallBackImp;
 import com.mahmoudH.tfidf.clasterManagment.LeaderElection;
-import com.mahmoudH.tfidf.clasterManagment.ServiceRegistry;
-import com.mahmoudH.tfidf.model.DocumentData;
-import com.mahmoudH.tfidf.search.TFIDF;
+import com.mahmoudH.tfidf.clasterManagment.WorkersServiceRegistry;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
 
 import java.io.*;
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class Application implements Watcher{
     final static public String PATH = "src/main/resources/books";
@@ -24,7 +21,7 @@ public class Application implements Watcher{
         int currentServerPort=args.length==1?Integer.parseInt(args[0]):8080;
         Application application=new Application();
         application.connectZooKeeper();
-        LeaderElection leaderElection=new LeaderElection(application.zooKeeper, new ElectionCallBackImp(new ServiceRegistry(application.zooKeeper),currentServerPort));
+        LeaderElection leaderElection=new LeaderElection(application.zooKeeper, new ElectionCallBackImp(new WorkersServiceRegistry(application.zooKeeper),new CoordinatorServiceRegistry(application.zooKeeper),currentServerPort));
         leaderElection.leaderVlo();
         leaderElection.electTheLeader();
         application.run();

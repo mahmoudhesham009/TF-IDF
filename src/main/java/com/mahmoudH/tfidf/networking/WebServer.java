@@ -43,11 +43,6 @@ public class WebServer {
         byte[] response = new byte[0];
         try {
             byte[] req=IOUtils.toByteArray(httpExchange.getRequestBody());
-            if(httpExchange.getRequestURI().getQuery()!=null){
-                String terms= httpExchange.getRequestURI().getQuery().split("=")[1];
-                terms=terms.replace('+',' ');
-                req= SerializationUtil.serialize(terms);
-            }
             response = requestCallback.handleRequest(req);
             sendResponse(response,httpExchange);
         } catch (InterruptedException e) {

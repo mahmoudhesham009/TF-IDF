@@ -10,25 +10,29 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class ElectionCallBackImp implements onElectionCallBack {
-    ServiceRegistry serviceRegistry;
+    WorkersServiceRegistry workersServiceRegistry;
+    CoordinatorServiceRegistry coordinatorServiceRegistry;
     WebServer webServer;
     int port;
 
-    public ElectionCallBackImp(ServiceRegistry serviceRegistry, int port) throws KeeperException, InterruptedException {
-        this.serviceRegistry=serviceRegistry;
+    public ElectionCallBackImp(WorkersServiceRegistry workersServiceRegistry, CoordinatorServiceRegistry coordinatorServiceRegistry,int port) throws KeeperException, InterruptedException {
+        this.workersServiceRegistry = workersServiceRegistry;
         this.port=port;
-        serviceRegistry.createServiceRegistry();
+        this.coordinatorServiceRegistry=coordinatorServiceRegistry;
+        this.coordinatorServiceRegistry.createServiceRegistry();
+        this.workersServiceRegistry.createServiceRegistry();
     }
 
-    public void onBeingLeader() throws IOException {
-        SearchLeader searchLeader=new SearchLeader(serviceRegistry);
+    public void onBeingLeader() throws IOException, InterruptedException, KeeperException {
+        SearchLeader searchLeader=new SearchLeader(workersServiceRegistry);
         if(webServer!=null)
             webServer.destroyServer();
         webServer=new WebServer(port, searchLeader);
         webServer.startServer();
+        coordinatorServiceRegistry.registerServiceToCluster("http://"+ InetAddress.getLocalHost().getCanonicalHostName()+":"+port+searchLeader.getEndPoint());
         try {
-            serviceRegistry.unregisterService();
-            serviceRegistry.updateAddress();
+            workersServiceRegistry.unregisterService();
+            workersServiceRegistry.updateAddress();
         } catch (KeeperException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -43,7 +47,7 @@ public class ElectionCallBackImp implements onElectionCallBack {
                 webServer.destroyServer();
             webServer=new WebServer(port,searchWorker);
             webServer.startServer();
-            serviceRegistry.registerServiceToCluster("http://"+ InetAddress.getLocalHost().getCanonicalHostName()+":"+port+searchWorker.getEndPoint());
+            workersServiceRegistry.registerServiceToCluster("http://"+ InetAddress.getLocalHost().getCanonicalHostName()+":"+port+searchWorker.getEndPoint());
         } catch (KeeperException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
