@@ -5,7 +5,7 @@
 
 
 
-Documaents searching algorithim running of distrbuted system using zookeeper as co-cordinator
+•	This Document searching algorithm running on distributed nods using zookeeper as co-coordinator
 
 
 
