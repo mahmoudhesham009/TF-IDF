@@ -5,7 +5,7 @@
 
 
 
-•	This Document searching algorithm running on distributed nods using zookeeper as co-coordinator
+•	This Document searching algorithm running on distributed nodes using zookeeper as co-coordinator
 
 
 
